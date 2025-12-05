@@ -2,6 +2,8 @@
 
 A custom k9s plugin with enhanced debugging capabilities for Kubernetes containers, featuring flexible container image selection.
 
+![Debug Plugin Demo](docs/debug-pod.png)
+
 ## Table of Contents
 
 - [About](#about)
@@ -46,11 +48,7 @@ K9s config directory: `~/.config/k9s/` or `~/Library/Application Support/k9s/`
 **Installation:**
 
 ```bash
-# Option 1: Standard location
-mkdir -p ~/.config/k9s/
-cp plugins.yaml ~/.config/k9s/
 
-# Option 2: Alternative location
 mkdir -p ~/Library/Application\ Support/k9s/
 cp plugins.yaml ~/Library/Application\ Support/k9s/
 ```
@@ -143,6 +141,7 @@ Essential shortcuts for using the debug plugin:
 **Description**: Launches an ephemeral debug container within a running pod, allowing you to troubleshoot issues without modifying the original container.
 
 **Features**:
+
 - Interactive image selection
 - Default Debian image for quick access
 - Shares process namespace with target container
@@ -168,6 +167,7 @@ kubectl debug -it \
 ### Plugin Not Working
 
 1. **Verify plugin file location**:
+
    ```bash
    # Linux/macOS
    ls -la ~/.config/k9s/plugins.yaml
@@ -177,6 +177,7 @@ kubectl debug -it \
    ```
 
 2. **Check YAML syntax**:
+
    ```bash
    # Install yq if not present
    brew install yq  # macOS
@@ -239,6 +240,7 @@ If changes don't take effect:
 2. **Check file location** - Ensure `plugins.yaml` is in the correct directory
 3. **Verify syntax** - Use `yamllint plugins.yaml` or online YAML validators
 4. **Check logs**:
+
    ```bash
    # Linux/macOS
    tail -f ~/.config/k9s/k9s.log
@@ -262,7 +264,7 @@ plugins:
     description: Your plugin description
     dangerous: false
     scopes:
-      - containers  # or pods, deployments, etc.
+      - containers # or pods, deployments, etc.
     command: bash
     background: false
     confirm: true
