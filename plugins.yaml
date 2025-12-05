@@ -1,0 +1,16 @@
+plugins:
+  debug:
+    shortCut: Shift-D
+    description: Add debug container
+    dangerous: true
+    scopes:
+      - containers
+    command: bash
+    background: false
+    confirm: true
+    args:
+      - -c
+      - |
+        read -p "Enter image name (default: debian): " IMAGE
+        IMAGE=${IMAGE:-debian}
+        kubectl --kubeconfig=$KUBECONFIG debug -it --context $CONTEXT -n=$NAMESPACE $POD --target=$NAME --image=$IMAGE --share-processes -- bash
