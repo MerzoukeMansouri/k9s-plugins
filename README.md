@@ -2,9 +2,7 @@
 
 A custom k9s plugin with enhanced debugging capabilities for Kubernetes containers, featuring flexible container image selection.
 
-<video src="docs/debug-plugins.mov" width="100%" controls>
-  Your browser does not support the video tag. <a href="docs/debug-plugins.mov">Download the demo video</a>.
-</video>
+![Debug Plugin Demo](docs/debug-plugin-demo.gif)
 
 ## Table of Contents
 
