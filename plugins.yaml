@@ -26,14 +26,21 @@ plugins:
     args:
       - -c
       - |
-        kubectl logs -f --context $CONTEXT -n $NAMESPACE $POD -c $NAME 2>&1 \
-          | jq -r --unbuffered '
-              if   .level == "ERROR" or .level == "FATAL"   then "[31m[\(.level)] \(.message)[0m"
-              elif .level == "WARN"  or .level == "WARNING" then "[33m[\(.level)] \(.message)[0m"
-              elif .level == "INFO"                         then "[32m[\(.level)] \(.message)[0m"
-              elif .level == "DEBUG"                        then "[36m[\(.level)] \(.message)[0m"
-              else "\(.message // .)" end' 2>/dev/null \
-          | less -R +F
+        kubectl logs -f --context $CONTEXT -n $NAMESPACE $POD -c $NAME 2>&1 | while IFS= read -r line; do
+          msg=$(printf '%s' "$line" | jq -r '.message // empty' 2>/dev/null)
+          if [ -n "$msg" ]; then
+            level=$(printf '%s' "$line" | jq -r '.level // ""' 2>/dev/null)
+            case "$level" in
+              ERROR|FATAL)   printf '\033[31m[%s] %s\033[0m\n' "$level" "$msg" ;;
+              WARN|WARNING)  printf '\033[33m[%s] %s\033[0m\n' "$level" "$msg" ;;
+              INFO)          printf '\033[32m[%s] %s\033[0m\n' "$level" "$msg" ;;
+              DEBUG)         printf '\033[36m[%s] %s\033[0m\n' "$level" "$msg" ;;
+              *)             printf '%s\n' "$msg" ;;
+            esac
+          else
+            printf '%s\n' "$line"
+          fi
+        done | less -R +F
 
   bookmark-jump:
     shortCut: Shift-L
