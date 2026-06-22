@@ -14,3 +14,50 @@ plugins:
         read -p "Enter image name (default: debian): " IMAGE
         IMAGE=${IMAGE:-debian}
         kubectl --kubeconfig=$KUBECONFIG debug -it --context $CONTEXT -n=$NAMESPACE $POD --target=$NAME --image=$IMAGE --share-processes -- bash
+
+  bookmark-jump:
+    shortCut: Shift-L
+    description: Jump to bookmarked namespace
+    scopes:
+      - namespaces
+      - pods
+      - deployments
+      - services
+      - configmaps
+      - secrets
+      - ingresses
+    command: bash
+    background: false
+    confirm: false
+    args:
+      - -c
+      - |
+        NS=$(sort -u "$HOME/.k9s_bookmarks" 2>/dev/null | fzf --prompt="Namespace> " --height=40% --reverse)
+        [ -n "$NS" ] && k9s --context $CONTEXT -n "$NS"
+
+  bookmark-add:
+    shortCut: Shift-G
+    description: Add current namespace to bookmarks
+    scopes:
+      - namespaces
+      - pods
+      - deployments
+      - services
+      - configmaps
+      - secrets
+      - ingresses
+    command: bash
+    background: false
+    confirm: false
+    args:
+      - -c
+      - |
+        BOOKMARKS_FILE="$HOME/.k9s_bookmarks"
+        touch "$BOOKMARKS_FILE"
+        if grep -qxF "$NAMESPACE" "$BOOKMARKS_FILE"; then
+          echo "'$NAMESPACE' is already bookmarked"
+        else
+          echo "$NAMESPACE" >> "$BOOKMARKS_FILE"
+          echo "Bookmarked '$NAMESPACE'"
+        fi
+        sleep 1
